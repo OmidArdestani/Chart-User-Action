@@ -1,3 +1,10 @@
+QT  += core gui widgets printsupport
+
+TEMPLATE = lib
+CONFIG += staticlib
+
+TARGET = CppChartUserAction
+
 HEADERS += \
     QCustomPlot/qcustomplot.h \
     Tools/cchartmarker.h \
