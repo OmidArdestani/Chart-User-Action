@@ -1,19 +1,20 @@
 
 #include "chartuseraction.h"
 
-CChartUserAction::CChartUserAction(QObject *parent)
-    : QObject{parent},ActionHandler{new CActionHandler()}
+CChartUserAction::CChartUserAction(QCustomPlot *custom_plot):
+    ActionHandler(new CActionHandler(custom_plot))
 {
+    QObject::connect(custom_plot,SIGNAL(mouseDoubleClick(QMouseEvent*)),ActionHandler,SLOT(SetPlotEvent(QMouseEvent*)));
+    QObject::connect(custom_plot,SIGNAL(mouseMove(QMouseEvent*)),ActionHandler,SLOT(SetPlotEvent(QMouseEvent*)));
+    QObject::connect(custom_plot,SIGNAL(mousePress(QMouseEvent*)),ActionHandler,SLOT(SetPlotEvent(QMouseEvent*)));
+    QObject::connect(custom_plot,SIGNAL(mouseRelease(QMouseEvent*)),ActionHandler,SLOT(SetPlotEvent(QMouseEvent*)));
+    QObject::connect(custom_plot,SIGNAL(mouseWheel(QWheelEvent*)),ActionHandler,SLOT(SetPlotEvent(QMouseEvent*)));
 
+    QObject::connect(custom_plot,SIGNAL(afterReplot()),ActionHandler,SLOT(UpdateView()));
 }
 
-CChartUserAction::CChartUserAction(QCustomPlot *custom_plot)
+void CChartUserAction::SetMode(EToolType mode)
 {
-    connect(custom_plot,SIGNAL(mouseDoubleClick(QMouseEvent*)),this,SLOT(OnMouseDoubleClick(QMouseEvent*)));
-    connect(custom_plot,SIGNAL(mouseMove(QMouseEvent*)),this,SLOT(OnMouseMove(QMouseEvent*)));
-    connect(custom_plot,SIGNAL(mousePress(QMouseEvent*)),this,SLOT(OnMousePress(QMouseEvent*)));
-    connect(custom_plot,SIGNAL(mouseRlease(QMouseEvent*)),this,SLOT(OnMouseRelease(QMouseEvent*)));
-    connect(custom_plot,SIGNAL(mouseWheel(QMouseEvent*)),this,SLOT(OnMouseWheel(QMouseEvent*)));
-
+    ActionHandler->SetActiveTool(mode);
 }
 

@@ -1,4 +1,3 @@
-
 #ifndef IPLOTTOOL_H
 #define IPLOTTOOL_H
 
@@ -7,6 +6,8 @@
 #include <QObject>
 
 #include <QCustomPlot/qcustomplot.h>
+
+#define PLOT_TOOL_LAYER_NAME "toolsLayer"
 
 enum class EToolType{
     Marker,
@@ -27,11 +28,11 @@ class IPlotTool
 public:
     IPlotTool(QCustomPlot* plot):Plot(plot){}
     virtual EToolType GetType() = 0;
-    virtual void UpdateWithMouseEvent(QMouseEvent *event) = 0;
     virtual void SetVisibility(bool value) = 0;
     virtual void SetColor(QColor color)=0;
     virtual void SetWorkingGraphIndex(int index)=0;
     virtual void SetGeometry(int x,int y,int width,int height) = 0;
+    virtual void UpdateWithMouseEvent(QMouseEvent *event) = 0;
     virtual void UpdateView() = 0;
 
 protected:
@@ -43,11 +44,12 @@ protected:
     QCustomPlot* Plot=nullptr;
 };
 
-class IToolBuilder
+class IPlotToolBuilder
 {
 public:
-    IToolBuilder(QCustomPlot* plot):Plot(plot){}
-    virtual void Update(QMouseEvent* e)=0;
+    IPlotToolBuilder(QCustomPlot* plot):Plot(plot){}
+    virtual void UpdateWithMouseEvent(QMouseEvent *event) = 0;
+    virtual void UpdateView() = 0;
 
 protected:
     QCustomPlot* Plot=nullptr;
