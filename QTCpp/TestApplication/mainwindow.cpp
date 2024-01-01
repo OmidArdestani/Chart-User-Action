@@ -15,13 +15,13 @@ MainWindow::MainWindow(QWidget *parent)
     GenerateSinData();
 
     CChartUserAction* chart_action = new CChartUserAction(ui->wPlot);
-    chart_action->SetMode(EToolType::Marker);
+    // chart_action->SetMode(EToolType::Marker);
 
 
     QTimer *tr=new QTimer(this);
 
     connect(tr,SIGNAL(timeout()),ui->wPlot,SLOT(replot()));
-    tr->start(200);
+    tr->start(100);
 }
 
 MainWindow::~MainWindow()
