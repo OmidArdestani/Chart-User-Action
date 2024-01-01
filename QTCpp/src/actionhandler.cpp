@@ -1,6 +1,7 @@
 
 #include "actionhandler.h"
 #include "Tools/chartmarker.h"
+#include <Tools/chartpointer.h>
 
 CActionHandler::CActionHandler(QCustomPlot *plot)
     : QObject{plot}
@@ -8,6 +9,8 @@ CActionHandler::CActionHandler(QCustomPlot *plot)
     plot->addLayer(PLOT_TOOL_LAYER_NAME);
 
     PlotTools.insert_or_assign(EToolType::Marker,new CChartMarkerBuilder(plot));
+    PlotTools.insert_or_assign(EToolType::Pointer,new CChartPointerBuilder(plot));
+
     // TO DO : insert other tools one by one after implementation
 }
 
