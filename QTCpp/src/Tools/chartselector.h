@@ -22,6 +22,34 @@ public:
     void SetWorkingGraphIndex(int index) override;
     void SetGeometry(int x, int y, int width, int height) override;
     void UpdateView() override;
+
+private:
+    void SetKeyRange(QCPRange value);
+
+private:
+
+    QColor Color        = Qt::white;
+    QString caption     = "";
+    bool areaVisibility = true;
+    QCPRange areaRange;
+    QCustomPlot *parent      = nullptr;
+    QCPItemText *areaCaption = nullptr;
+    QCPItemRect *areaRect    = nullptr;
+
+    QPoint MousePressBegin = QPoint(0, 0);
+    QPointF MouseMoveCoord = QPointF(0, 0);
+
+private:
+    void MousePressAction();
+    void MouseReleaseAction();
+};
+
+class CChartSelectorBuilder: public IPlotToolBuilder
+{
+public:
+    CChartSelectorBuilder(QCustomPlot* plot);
+    void UpdateWithMouseEvent(QMouseEvent* e) override;
+    void UpdateView() override;
 };
 
 #endif // CHARTSELECTOR_H

@@ -5,7 +5,7 @@ CChartMarker::CChartMarker(QCustomPlot* plot,int graph_index)
 {
     // init tracer
     Tracer            = new QCPItemTracer(Plot);
-    Tracer->setGraph(Plot->graph(0/*graph_index*/));
+    Tracer->setGraph(Plot->graph(graph_index));
     Tracer->setSize(8);
     Tracer->setStyle(QCPItemTracer::tsCircle);
     Tracer->setLayer(Plot->layer(PLOT_TOOL_LAYER_NAME));

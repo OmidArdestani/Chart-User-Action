@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     GenerateSinData();
 
     CChartUserAction* chart_action = new CChartUserAction(ui->wPlot);
-    // chart_action->SetMode(EToolType::Marker);
+    chart_action->SetMode(EToolType::Selector);
 
 
     QTimer *tr=new QTimer(this);

@@ -47,7 +47,6 @@ private:
     QCPItemPixmap *ValueMeasureEnd   = nullptr;
     bool UpdateFlag = false;
     QPoint MousePressBegin = QPoint(0, 0);
-    // QPoint MousePressEnd   = QPoint(0, 0);
     QPointF MouseMoveCoord = QPointF(0, 0);
     int KeyPrecision = 1;
     int ValuePrecision = 1;
