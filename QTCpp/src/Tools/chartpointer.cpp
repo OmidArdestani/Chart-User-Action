@@ -1,9 +1,17 @@
-
 #include "chartpointer.h"
+
+#include <QString>
 
 CChartPointer::CChartPointer(QCustomPlot* plot,int graph_index)
     : IPlotTool(plot)
 {
+
+    CaptionPointer = new QCPItemText(Plot);
+    CaptionPointer->setPositionAlignment(Qt::AlignRight | Qt::AlignTop);
+    CaptionPointer->position->setType(QCPItemPosition::ptAbsolute);
+    CaptionPointer->setFont(QFont(Plot->font().family(), 10));
+    CaptionPointer->setVisible(false);
+
     HorizontalLine = new QCPItemLine(plot);
     HorizontalLine->start->setType(QCPItemPosition::ptPlotCoords);
     HorizontalLine->end->setType(QCPItemPosition::ptPlotCoords);
@@ -19,6 +27,8 @@ CChartPointer::CChartPointer(QCustomPlot* plot,int graph_index)
     VerticalLine->start->setCoords(0.5,plot->yAxis->range().lower);
     VerticalLine->end->setCoords(0.5,plot->yAxis->range().upper);
     VerticalLine->setLayer(Plot->layer(PLOT_TOOL_LAYER_NAME));
+
+
 
     SetColor(QColor(99, 102, 123));
 
@@ -36,6 +46,10 @@ EToolType CChartPointer::GetType()
 
 void CChartPointer::UpdateWithMouseEvent(QMouseEvent *event)
 {
+
+    captionPosition = QPointF(event->x(),event->y());
+    CaptionPointer->position->setCoords(captionPosition);
+
     if(event->type() == QEvent::MouseMove)
     {
         auto h_updated_value = Plot->yAxis->pixelToCoord(event->y());
@@ -45,8 +59,10 @@ void CChartPointer::UpdateWithMouseEvent(QMouseEvent *event)
         auto v_updated_value = Plot->xAxis->pixelToCoord(event->x());
         VerticalLine->start->setCoords(v_updated_value,Plot->yAxis->range().lower);
         VerticalLine->end->setCoords(v_updated_value,Plot->yAxis->range().upper);
-
+        CurrentKey = Plot->xAxis->pixelToCoord(event->x());
+        CurrentValue = Plot->yAxis->pixelToCoord(event->y());
     }
+
 
 }
 
@@ -77,9 +93,6 @@ void CChartPointer::SetGeometry(int x, int y, int width, int height)
 {
 }
 
-void CChartPointer::UpdateView()
-{
-}
 
 CChartPointerBuilder::CChartPointerBuilder(QCustomPlot *plot):IPlotToolBuilder(plot)
 {
@@ -104,12 +117,36 @@ void CChartPointerBuilder::UpdateWithMouseEvent(QMouseEvent *e)
     }
 }
 
+QCPItemText *CChartPointer::GetCaptionPointer()
+{
+    return CaptionPointer;
+
+}
+
 void CChartPointerBuilder::UpdateView()
 {
     if(!CurrentTool)return;
 
     this->CurrentTool->UpdateView();
+}
 
-//    UpdatePointersCaption();
+double CChartPointer::GetValue()
+{
+    return CurrentValue;
+}
+
+double CChartPointer::GetKey()
+{
+    return CurrentKey;
+}
+
+void CChartPointer::UpdateView()
+{
+    double  delta_value  = GetValue();
+    double  delta_key    = GetKey();
+    CaptionPointer->setFont(QFont(Plot->font().family(), 10));
+    CaptionPointer->setText(QString::number(delta_key, 'f', 3) + KeySuffix + ", " + QString::number(delta_value, 'f', 3) + " " + ValueSuffix);
+    CaptionPointer->setVisible(true);
+
 }
 
