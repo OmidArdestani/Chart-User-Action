@@ -3,8 +3,6 @@
 #include "Tools/chartmarker.h"
 #include <Tools/chartpointer.h>
 
-#include <Tools/chartmeasure.h>
-
 CActionHandler::CActionHandler(QCustomPlot *plot)
     : QObject{plot}
 {
@@ -12,10 +10,8 @@ CActionHandler::CActionHandler(QCustomPlot *plot)
 
     PlotTools.insert_or_assign(EToolType::Marker,new CChartMarkerBuilder(plot));
     PlotTools.insert_or_assign(EToolType::Pointer,new CChartPointerBuilder(plot));
-    PlotTools.insert_or_assign(EToolType::Measure,new CChartMeasureBuilder(plot));
-    // TO DO : insert other tools one by one after implementation
 
-    ActiveToolType = EToolType::Measure;
+    // TO DO : insert other tools one by one after implementation
 }
 
 void CActionHandler::SetPlotEvent(QMouseEvent *e)
