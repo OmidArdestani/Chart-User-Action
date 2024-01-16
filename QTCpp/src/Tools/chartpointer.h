@@ -5,13 +5,14 @@
 
 #include <QObject>
 #include "iplottool.h"
-
+#include <QPointF>
 
 class CChartPointer: public IPlotTool
 {
 public:
     CChartPointer(QCustomPlot* plot, int graph_index=0);
-
+    double GetValue();
+    double GetKey();
 
     // IPlotTool interface
 public:
@@ -22,9 +23,16 @@ public:
     void SetWorkingGraphIndex(int index) override;
     void SetGeometry(int x, int y, int width, int height) override;
     void UpdateView() override;
+    QCPItemText* GetCaptionPointer();
+
 private:
     QCPItemLine *HorizontalLine = nullptr;
     QCPItemLine *VerticalLine = nullptr;
+    QCPItemText* CaptionPointer = nullptr;
+    double CurrentKey = 0;
+    double CurrentValue = 0;
+    QFont UnderlineFont;
+    QPointF captionPosition;
 
 };
 
@@ -36,5 +44,6 @@ public:
     void UpdateView() override;
 
 private:
+
 };
 #endif // CHARTPOINTER_H
