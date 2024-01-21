@@ -5,12 +5,18 @@
 CChartPointer::CChartPointer(QCustomPlot* plot,int graph_index)
     : IPlotTool(plot)
 {
+    CaptionBackground = new QCPItemRect(Plot);
+    CaptionBackground->topLeft->setType(QCPItemPosition::ptAbsolute);
+    CaptionBackground->bottomRight->setType(QCPItemPosition::ptAbsolute);
+
 
     CaptionPointer = new QCPItemText(Plot);
     CaptionPointer->setPositionAlignment(Qt::AlignRight | Qt::AlignTop);
     CaptionPointer->position->setType(QCPItemPosition::ptAbsolute);
     CaptionPointer->setFont(QFont(Plot->font().family(), 10));
     CaptionPointer->setVisible(false);
+
+
 
     HorizontalLine = new QCPItemLine(plot);
     HorizontalLine->start->setType(QCPItemPosition::ptPlotCoords);
@@ -49,6 +55,12 @@ void CChartPointer::UpdateWithMouseEvent(QMouseEvent *event)
 
     captionPosition = QPointF(event->x(),event->y());
     CaptionPointer->position->setCoords(captionPosition);
+    CaptionBackground->topLeft->setCoords(captionPosition);
+    CaptionBackground->topLeft->setParentAnchor(CaptionPointer->topLeft);
+
+//    bottomRight = QPointF(event->x()+50,event->y());
+//    CaptionBackground->bottomRight->setCoords(bottomRight);
+    CaptionBackground->bottomRight->setParentAnchor(CaptionPointer->bottomRight);
 
     if(event->type() == QEvent::MouseMove)
     {
