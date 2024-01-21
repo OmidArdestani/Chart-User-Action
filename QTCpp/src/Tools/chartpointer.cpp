@@ -58,8 +58,6 @@ void CChartPointer::UpdateWithMouseEvent(QMouseEvent *event)
     CaptionBackground->topLeft->setCoords(captionPosition);
     CaptionBackground->topLeft->setParentAnchor(CaptionPointer->topLeft);
 
-//    bottomRight = QPointF(event->x()+50,event->y());
-//    CaptionBackground->bottomRight->setCoords(bottomRight);
     CaptionBackground->bottomRight->setParentAnchor(CaptionPointer->bottomRight);
 
     if(event->type() == QEvent::MouseMove)
