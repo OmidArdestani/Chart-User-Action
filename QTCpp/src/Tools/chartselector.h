@@ -31,7 +31,15 @@ private:
     QColor Color        = Qt::white;
     QString caption     = "";
     bool areaVisibility = true;
+
+    bool flagNewArea                 = false;
+    bool areaResizeLower             = false;
+    bool areaResizeUpper             = false;
+    bool flagPlotClick               = false;
+
     QCPRange areaRange;
+    QCPRange tempKeyRange;
+
     QCustomPlot *parent      = nullptr;
     QCPItemText *areaCaption = nullptr;
     QCPItemRect *areaRect    = nullptr;
@@ -42,6 +50,7 @@ private:
 private:
     void MousePressAction();
     void MouseReleaseAction();
+    void MouseMoveAction(QMouseEvent *event);
 };
 
 class CChartSelectorBuilder: public IPlotToolBuilder
