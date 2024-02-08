@@ -25,3 +25,6 @@ SOURCES += \
     Tools/chartshape.cpp \
     actionhandler.cpp \
     chartuseraction.cpp
+
+FORMS += \
+    chartuseraction.ui

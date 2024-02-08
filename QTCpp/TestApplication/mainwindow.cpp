@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     CChartUserAction* chart_action = new CChartUserAction(ui->wPlot);
     chart_action->SetMode(EToolType::Selector);
+    chart_action->show();
 
 
     QTimer *tr=new QTimer(this);

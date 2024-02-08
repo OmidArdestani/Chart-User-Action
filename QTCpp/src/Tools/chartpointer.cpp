@@ -62,8 +62,6 @@ void CChartPointer::UpdateWithMouseEvent(QMouseEvent *event)
         CurrentKey = Plot->xAxis->pixelToCoord(event->x());
         CurrentValue = Plot->yAxis->pixelToCoord(event->y());
     }
-
-
 }
 
 void CChartPointer::SetVisibility(bool value)
