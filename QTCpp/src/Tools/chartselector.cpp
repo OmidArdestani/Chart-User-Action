@@ -4,121 +4,112 @@
 CChartSelector::CChartSelector(QCustomPlot* plot,int graph_index)
     : IPlotTool(plot)
 {
-    areaRect     = new QCPItemRect(Plot);
-    areaRect->topLeft->setType(QCPItemPosition::ptPlotCoords);
-    areaRect->bottomRight->setType(QCPItemPosition::ptPlotCoords);
-    //
-    areaCaption = new QCPItemText(Plot);
-    areaCaption->setTextAlignment(Qt::AlignCenter | Qt::AlignTop);
-    //  areaCaption->setPositionAlignment(Qt::AlignCenter|Qt::AlignTop);
-    areaCaption->position->setType(QCPItemPosition::ptPlotCoords);
-    areaCaption->setColor(Qt::cyan);
-    areaCaption->setFont(QFont(Plot->font().family(), 10, QFont::Bold));
+    AreaRect     = new QCPItemRect(Plot);
+    AreaRect->topLeft->setType(QCPItemPosition::ptPlotCoords);
+    AreaRect->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+    AreaRect->setLayer(Plot->layer(PLOT_TOOL_LAYER_NAME));
 
-    //set layer to caption &rect
-    areaCaption->setLayer(Plot->layer(PLOT_TOOL_LAYER_NAME));
-    areaRect->setLayer(Plot->layer(PLOT_TOOL_LAYER_NAME));
-    areaCaption->setVisible(false);
-    areaRect->setVisible(false);
+    AreaCaption = new QCPItemText(Plot);
+    AreaCaption->setTextAlignment(Qt::AlignCenter | Qt::AlignTop);
+    AreaCaption->position->setType(QCPItemPosition::ptPlotCoords);
+    AreaCaption->setColor(Qt::cyan);
+    AreaCaption->setFont(QFont(Plot->font().family(), 10, QFont::Bold));
+    AreaCaption->setLayer(Plot->layer(PLOT_TOOL_LAYER_NAME));
 
     SetWorkingGraphIndex(graph_index);
 }
 
-
-EToolType CChartSelector::GetType()
-{
-    return EToolType::Selector;
-}
-
 void CChartSelector::MouseMoveAction(QMouseEvent *event)
 {
-    if (flagPlotClick)
+    if (FlagPlotClick)
     {
         //when click inside the area
         //decide resize or move in if
         //resize
-        if (areaResizeLower)
+        if (AreaResizeLower)
         {
-            double deltaKey = Plot->xAxis->pixelToCoord(event->x()) -
-                              Plot->xAxis->pixelToCoord(MousePressBegin.x());
-            double   lowKeyBand  = tempKeyRange.lower + deltaKey;
-            double   uperKeyBand = tempKeyRange.upper;
-            QCPRange newrange(lowKeyBand, uperKeyBand);
-            SetKeyRange(newrange);
-            // emit areaMoved(newrange, indexSearchArea);
+            double   low_key_band  = Plot->xAxis->pixelToCoord(event->x());
+            double   uper_key_band = AreaRange.upper;
+            QCPRange new_range(low_key_band, uper_key_band);
+            SetKeyRange(new_range);
+
+            emit AreaMoved(new_range);
         }
-        else if (areaResizeUpper)
+        else if (AreaResizeUpper)
         {
-            double deltaKey = Plot->xAxis->pixelToCoord(event->x()) -
-                              Plot->xAxis->pixelToCoord(MousePressBegin.x());
-            double   lowKeyBand  = tempKeyRange.lower;
-            double   uperKeyBand = tempKeyRange.upper + deltaKey;
-            QCPRange newrange(lowKeyBand, uperKeyBand);
-            SetKeyRange(newrange);
-            // emit areaMoved(newrange, indexSearchArea);
+            double   low_key_band  = AreaRange.lower;
+            double   uper_key_band = Plot->xAxis->pixelToCoord(event->x());
+            QCPRange new_range(low_key_band, uper_key_band);
+
+            SetKeyRange(new_range);
+
+             emit AreaMoved(new_range);
         }
         //move area
-        else
+        else if(MovingArea)
         {
-            double deltaKey = Plot->xAxis->pixelToCoord(event->x()) -
-                              Plot->xAxis->pixelToCoord(MousePressBegin.x());
-            double   lowKeyBand  = tempKeyRange.lower + deltaKey;
-            double   uperKeyBand = tempKeyRange.upper + deltaKey;
-            QCPRange newrange(lowKeyBand, uperKeyBand);
-            SetKeyRange(newrange);
-            // emit areaMoved(newrange, indexSearchArea);
-            //               emit selectedArea(newrange, indexSearchArea);
+            int delta_x = event->x() - MousePressBegin.x();
+            if(delta_x == 0) return;
+
+            double delta_key = Plot->xAxis->pixelToCoord(delta_x);
+            double   low_key_band  = TempKeyRange.lower + delta_key;
+            double   uper_key_band = TempKeyRange.upper + delta_key;
+            QCPRange new_range(low_key_band, uper_key_band);
+
+            SetKeyRange(new_range);
+
+            emit AreaMoved(new_range);
+            emit SelectedArea();
         }
     }
 }
 
 void CChartSelector::MousePressAction()
 {
-    {
-        double   keyLowBand  = Plot->xAxis->pixelToCoord(MousePressBegin.x());
-        double   keyUperBand = Plot->xAxis->pixelToCoord(MouseMoveCoord.x());
-        QCPRange newKeyRange(keyLowBand, keyUperBand);
-        areaRange = newKeyRange;
-        //remove area if less than a constant value
-        double value = Plot->xAxis->range().size() / 100 * 10;
-        if (newKeyRange.size() < value)
-        {
-            // toolList->areaList[toolList->areaList.count() - 1]->destroyed();
-        }
-    }
     //is in area
     if (Visibility)
     {
+        // lower size limitation
+        double scale           = Plot->xAxis->range().size() / 100;
+        double mouse_press_pos = Plot->xAxis->pixelToCoord(MousePressBegin.x());
+
+        if(FirstAction)
+        {
+            QCPRange new_range(mouse_press_pos, mouse_press_pos + scale);
+            SetKeyRange(new_range);
+            SetColor(Qt::blue);
+
+            AreaResizeUpper = true;
+            return;
+        }
+
         //resize lower
-        double scale         = Plot->xAxis->range().size() / 100;
-        double mousePressPos = Plot->xAxis->pixelToCoord(MousePressBegin.x());
-        if ((areaRange.lower - scale < mousePressPos) &&
-            (areaRange.lower + scale > mousePressPos))
-        {
-            areaResizeLower = true;
-        }
+        if ((AreaRange.lower - scale < mouse_press_pos) && (AreaRange.lower + scale > mouse_press_pos))
+            AreaResizeLower = true;
         //resize upper
-        else if ((areaRange.upper - scale < mousePressPos) &&
-                 (areaRange.upper + scale > mousePressPos))
+        else if ((AreaRange.upper - scale < mouse_press_pos) && (AreaRange.upper + scale > mouse_press_pos))
+            AreaResizeUpper = true;
+        //moving
+        else if(AreaRange.lower < mouse_press_pos && AreaRange.upper > mouse_press_pos)
         {
-            areaResizeUpper = true;
+            MovingArea = true;
+            TempKeyRange = AreaRange;
         }
-        //move area
-        tempKeyRange = areaRange;
     }
 }
 
-
 void CChartSelector::MouseReleaseAction()
 {
-    flagNewArea     = false;
-    areaResizeLower = false;
-    areaResizeUpper = false;
+    AreaResizeLower = false;
+    AreaResizeUpper = false;
+    MovingArea  = false;
+    FirstAction = false;
 }
 
 void CChartSelector::UpdateWithMouseEvent(QMouseEvent *event)
 {
-    switch (event->type()) {
+    switch (event->type())
+    {
     case QEvent::MouseMove:
         MouseMoveAction(event);
         break;
@@ -126,15 +117,17 @@ void CChartSelector::UpdateWithMouseEvent(QMouseEvent *event)
         if ((event->button() == Qt::LeftButton) || (event->button() == Qt::RightButton))
         {
             MousePressBegin = event->pos();
+            SetVisibility(true);
             MousePressAction();
-            flagPlotClick   = true;
+            FlagPlotClick   = true;
         }
         break;
     case QEvent::MouseButtonRelease:
         if ((event->button() == Qt::LeftButton) || (event->button() == Qt::RightButton))
         {
+            MouseMoveCoord = event->pos();
             MouseReleaseAction();
-            flagPlotClick = false;
+            FlagPlotClick = false;
         }
         break;
     default:
@@ -144,30 +137,19 @@ void CChartSelector::UpdateWithMouseEvent(QMouseEvent *event)
 
 void CChartSelector::SetVisibility(bool value)
 {
-    areaVisibility = value;
-    if (areaVisibility == true)
-    {
-        areaRect->setVisible(true);
-        areaCaption->setVisible(true);
-    }
-    else
-    {
-        areaRect->setVisible(false);
-        areaCaption->setVisible(false);
-    }
+    Visibility = value;
+
+    AreaRect->setVisible(Visibility);
+    AreaCaption->setVisible(Visibility);
 }
 
 void CChartSelector::SetColor(QColor color)
 {
     this->Color = color;
-    areaRect->setPen(QPen(Color));
-    areaCaption->setColor(Color);
+    AreaRect->setPen(QPen(Color));
+    AreaCaption->setColor(Color);
     color.setAlpha(45);
-    areaRect->setBrush(QBrush(color));
-}
-
-void CChartSelector::SetWorkingGraphIndex(int index)
-{
+    AreaRect->setBrush(QBrush(color));
 }
 
 void CChartSelector::SetGeometry(int x, int y, int width, int height)
@@ -177,12 +159,11 @@ void CChartSelector::SetGeometry(int x, int y, int width, int height)
 void CChartSelector::UpdateView()
 {
     //set caption and rect position when area range changed
-    if (qAbs(areaRange.size()) > 0.0001)
+    if (qAbs(AreaRange.size()) > 0.0001 && Visibility)
     {
-        areaCaption->position->setCoords(areaRange.center(), parent->yAxis->pixelToCoord(20));
-        areaRect->topLeft->setCoords(areaRange.lower, parent->yAxis->range().upper);
-        areaRect->bottomRight->setCoords(areaRange.upper, parent->yAxis->range().lower);
-        areaRect->setVisible(true);
+        AreaCaption->position->setCoords(AreaRange.center(), Plot->yAxis->pixelToCoord(20));
+        AreaRect->topLeft->setCoords(AreaRange.lower, Plot->yAxis->range().upper);
+        AreaRect->bottomRight->setCoords(AreaRange.upper, Plot->yAxis->range().lower);
     }
 }
 
@@ -194,12 +175,10 @@ void CChartSelector::SetKeyRange(QCPRange value)
         value.lower = value.upper;
         value.upper = temp;
     }
-    areaRange = value;
-    areaRect->setVisible(true);
-    areaCaption->setVisible(true);
+    AreaRange = value;
     //
     UpdateView();
-    parent->replot();
+    Plot->replot();
     //    emit areaFrequencyRange(areaRange);
 }
 //-------------------------------------------------------------
@@ -216,6 +195,7 @@ void CChartSelectorBuilder::UpdateWithMouseEvent(QMouseEvent *e)
     {
     case EToolBuildMode::BuildNew:
         this->CurrentTool = new CChartSelector(Plot);
+        this->CurrentTool->SetVisibility(false);
 
         this->ToolList.push_back(CurrentTool);
 
@@ -223,7 +203,6 @@ void CChartSelectorBuilder::UpdateWithMouseEvent(QMouseEvent *e)
 
     case EToolBuildMode::Modify:
         this->CurrentTool->UpdateWithMouseEvent(e);
-        this->CurrentTool->SetVisibility(true);
         break;
     }
 }

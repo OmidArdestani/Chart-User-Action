@@ -11,25 +11,21 @@ CActionHandler::CActionHandler(QCustomPlot *plot)
 {
     plot->addLayer(PLOT_TOOL_LAYER_NAME);
 
-    PlotTools.insert_or_assign(EToolType::Marker,new CChartMarkerBuilder(plot));
-    PlotTools.insert_or_assign(EToolType::Pointer,new CChartPointerBuilder(plot));
-    PlotTools.insert_or_assign(EToolType::Measure,new CChartMeasureBuilder(plot));
-    PlotTools.insert_or_assign(EToolType::Selector,new CChartSelectorBuilder(plot));
+    PlotTools.insert(EToolType::Marker,new CChartMarkerBuilder(plot));
+    PlotTools.insert(EToolType::Pointer,new CChartPointerBuilder(plot));
+    PlotTools.insert(EToolType::Measure,new CChartMeasureBuilder(plot));
+    PlotTools.insert(EToolType::Selector,new CChartSelectorBuilder(plot));
     // TO DO : insert other tools one by one after implementation
 }
 
 void CActionHandler::SetPlotEvent(QMouseEvent *e)
 {
-    auto tool = PlotTools.find(ActiveToolType);
-    if(tool != PlotTools.end())
-        tool->second->UpdateWithMouseEvent(e);
+    PlotTools.value(ActiveToolType)->UpdateWithMouseEvent(e);
 }
 
 void CActionHandler::UpdateView()
 {
-    auto tool = PlotTools.find(ActiveToolType);
-    if(tool != PlotTools.end())
-        tool->second->UpdateView();
+    PlotTools.value(ActiveToolType)->UpdateView();
 }
 
 void CActionHandler::SetActiveTool(EToolType mode)

@@ -14,7 +14,7 @@ public:
     explicit CActionHandler(QCustomPlot* plot);
 
 private:
-    std::map<EToolType,IPlotToolBuilder*> PlotTools;
+    QMap<EToolType,IPlotToolBuilder*> PlotTools;
 
 public slots:
     void SetPlotEvent(QMouseEvent* e);
