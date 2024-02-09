@@ -2,3 +2,4 @@ build*
 *build*
 *.user
 QTCpp/src/CppChartUserAction.pro.user
+

@@ -2,7 +2,6 @@
 #include "actionhandler.h"
 #include "Tools/chartmarker.h"
 #include <Tools/chartpointer.h>
-
 #include <Tools/chartmeasure.h>
 #include <Tools/chartselector.h>
 

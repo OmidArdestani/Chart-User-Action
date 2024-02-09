@@ -28,10 +28,13 @@ private:
     QCPItemLine *HorizontalLine = nullptr;
     QCPItemLine *VerticalLine = nullptr;
     QCPItemText* CaptionPointer = nullptr;
+    QCPItemRect* CaptionBackground = nullptr;
+
     double CurrentKey = 0;
     double CurrentValue = 0;
     QFont UnderlineFont;
     QPointF captionPosition;
+    QPointF bottomRight;
 };
 
 class CChartPointerBuilder: public IPlotToolBuilder
