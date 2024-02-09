@@ -23,7 +23,6 @@ public:
     void SetWorkingGraphIndex(int index) override;
     void SetGeometry(int x, int y, int width, int height) override;
     void UpdateView() override;
-    QCPItemText* GetCaptionPointer();
 
 private:
     QCPItemLine *HorizontalLine = nullptr;
@@ -44,8 +43,5 @@ public:
     CChartPointerBuilder(QCustomPlot* plot);
     void UpdateWithMouseEvent(QMouseEvent* e) override;
     void UpdateView() override;
-
-private:
-
 };
 #endif // CHARTPOINTER_H

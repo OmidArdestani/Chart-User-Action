@@ -52,14 +52,6 @@ EToolType CChartPointer::GetType()
 
 void CChartPointer::UpdateWithMouseEvent(QMouseEvent *event)
 {
-
-    captionPosition = QPointF(event->x(),event->y());
-    CaptionPointer->position->setCoords(captionPosition);
-    CaptionBackground->topLeft->setCoords(captionPosition);
-    CaptionBackground->topLeft->setParentAnchor(CaptionPointer->topLeft);
-
-    CaptionBackground->bottomRight->setParentAnchor(CaptionPointer->bottomRight);
-
     if(event->type() == QEvent::MouseMove)
     {
         auto h_updated_value = Plot->yAxis->pixelToCoord(event->y());
@@ -69,15 +61,32 @@ void CChartPointer::UpdateWithMouseEvent(QMouseEvent *event)
         auto v_updated_value = Plot->xAxis->pixelToCoord(event->x());
         VerticalLine->start->setCoords(v_updated_value,Plot->yAxis->range().lower);
         VerticalLine->end->setCoords(v_updated_value,Plot->yAxis->range().upper);
+
+        captionPosition = QPointF(event->x(),event->y());
+        CaptionPointer->position->setCoords(captionPosition);
+      
+        CaptionBackground->topLeft->setCoords(captionPosition);
+        CaptionBackground->topLeft->setParentAnchor(CaptionPointer->topLeft);
+        CaptionBackground->bottomRight->setParentAnchor(CaptionPointer->bottomRight);
+
         CurrentKey = Plot->xAxis->pixelToCoord(event->x());
         CurrentValue = Plot->yAxis->pixelToCoord(event->y());
+
+        if ((CurrentKey >= Plot->xAxis->range().lower) && (CurrentKey <= Plot->xAxis->range().upper) &&
+            (CurrentValue >= Plot->yAxis->range().lower) && (CurrentValue <= Plot->yAxis->range().upper))
+            this->SetVisibility(true);
+        else
+            this->SetVisibility(false);
     }
-
-
 }
 
 void CChartPointer::SetVisibility(bool value)
 {
+    IPlotTool::SetVisibility(value);
+
+    HorizontalLine->setVisible(Visibility);
+    VerticalLine->setVisible(Visibility);
+    CaptionPointer->setVisible(Visibility);
 }
 
 void CChartPointer::SetColor(QColor color)
@@ -122,15 +131,8 @@ void CChartPointerBuilder::UpdateWithMouseEvent(QMouseEvent *e)
 
     case EToolBuildMode::Modify:
         this->CurrentTool->UpdateWithMouseEvent(e);
-        this->CurrentTool->SetVisibility(true);
         break;
     }
-}
-
-QCPItemText *CChartPointer::GetCaptionPointer()
-{
-    return CaptionPointer;
-
 }
 
 void CChartPointerBuilder::UpdateView()
@@ -156,7 +158,5 @@ void CChartPointer::UpdateView()
     double  delta_key    = GetKey();
     CaptionPointer->setFont(QFont(Plot->font().family(), 10));
     CaptionPointer->setText(QString::number(delta_key, 'f', 3) + KeySuffix + ", " + QString::number(delta_value, 'f', 3) + " " + ValueSuffix);
-    CaptionPointer->setVisible(true);
-
 }
 

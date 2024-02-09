@@ -23,14 +23,14 @@ enum class EToolBuildMode
     Modify
 };
 
-class IPlotTool
+class IPlotTool : public QObject
 {
 public:
     IPlotTool(QCustomPlot* plot):Plot(plot){}
     virtual EToolType GetType() = 0;
-    virtual void SetVisibility(bool value) = 0;
-    virtual void SetColor(QColor color)=0;
-    virtual void SetWorkingGraphIndex(int index)=0;
+    virtual void SetVisibility(bool value){Visibility = value;};
+    virtual void SetColor(QColor color){Color = color;};
+    virtual void SetWorkingGraphIndex(int index){WorkingGraphIndex = index;};
     virtual void SetGeometry(int x,int y,int width,int height) = 0;
     virtual void UpdateWithMouseEvent(QMouseEvent *event) = 0;
     virtual void UpdateView() = 0;
