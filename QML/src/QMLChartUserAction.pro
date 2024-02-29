@@ -1,0 +1,2 @@
+DISTFILES += \
+    MainChart.qml
