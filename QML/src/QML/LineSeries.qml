@@ -22,13 +22,14 @@ ChartView {
         XYPoint { x: 4.1; y: 3.3 }
     }
 
-    // Loader{
-    //     anchors.fill: parent
-    //     asynchronous: true
-    //     source: "PointerTool.qml"
-    // }
+    MarkerTool{
+        chartView: chartView
+        anchors.fill: parent
+        visible: true
+    }
     PointerTool{
         chartView: chartView
         anchors.fill: parent
+        visible: false
     }
 }

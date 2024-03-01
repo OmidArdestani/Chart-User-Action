@@ -25,6 +25,7 @@ target_link_libraries(UserChartAction PUBLIC
 set(resources_resource_files
     "qml/LineSeries.qml"
     "qml/PointerTool.qml"
+    "qml/MarkerTool.qml"
     "qml/Main.qml"
 )
 
