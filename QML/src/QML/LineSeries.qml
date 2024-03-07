@@ -25,11 +25,11 @@ ChartView {
     MarkerTool{
         chartView: chartView
         anchors.fill: parent
-        visible: true
+        visible: false
     }
     PointerTool{
         chartView: chartView
         anchors.fill: parent
-        visible: false
+        visible: true
     }
 }
