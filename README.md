@@ -1,8 +1,8 @@
-# QCustomPlot User Interaction Library
+# Chart User Interaction Library (QCustomPlot and QML)
 
 ## Overview
 
-The QCustomPlot User Interaction Library is a collection of tools built on top of the QCustomPlot library to enhance user interaction with plots. It provides various features such as pointer tools, marker placement, area selection, zoom functionality, measurement ruler, and shapes drawing capabilities.
+The Chart User Interaction Library is a collection of tools built on top of the Chart library (QCustomPlot and QML Chart) to enhance user interaction with plots. It provides various features such as pointer tools, marker placement, area selection, zoom functionality, measurement ruler, and shapes drawing capabilities.
 
 ## Features
 
@@ -27,11 +27,11 @@ The QCustomPlot User Interaction Library is a collection of tools built on top o
 
 ## Usage
 
-To use the QCustomPlot User Interaction Library in your project, follow these steps:
+To use the Chart User Interaction Library in your project, follow these steps:
 
 1. **Installation**: Clone the repository or download the source code.
 2. **Integration**: Include the necessary files in your project and link against the required libraries (e.g., QCustomPlot).
-3. **Initialization**: Initialize the library and attach it to your QCustomPlot instance.
+3. **Initialization**: Initialize the library and attach it to your QCustomPlot or QML Chart instance.
 4. **Configuration**: Customize the behavior and appearance of the user interaction tools according to your requirements.
 5. **Integration**: Integrate the user interaction tools into your application's GUI and connect them to appropriate signals and slots.
 
